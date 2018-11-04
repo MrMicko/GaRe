@@ -1,0 +1,397 @@
+﻿// b4 = right mouse disables head mouse
+// b5 = trying ti fx jumping when switching mode from hydra to hm
+// full mouse on stand still disabled
+// v2 - removed all mouse rightbutton features, replace all with dot
+// V4 B1 - Comma disables head mouse, dot only on center
+// V5 B1 - new way to start the HM. First home enters calibration mode
+// and does not enable mouse. After calibration End and Home again to enable HM
+
+/*
+if key.End && key.RightAlt
+   chain("E:\progs\GlovePIE045Free\omat\GameMouse_v4_b6.pie")
+endif
+*/
+ // 15.5.2017 Removed IRIS, changed var.x and var.y to smooth-value
+// End master switch off
+if key.Ctrl && key.Delete
+   ExitPie
+endif
+
+// TODO: Mitä jos lähtis pois päältä autom jos ei tule jotain signaalia pääfileltä..
+if (starting){
+
+var.smoothMouse = true
+
+var.degreeLimitX = 200
+var.degreeLimitY = 60
+
+var.mickeysLimitX = 1500
+var.mickeysLimitY = 1500
+
+var.sensitivity = 140  //default
+
+var.Xfrom = -var.mickeysLimitX
+var.Xto =  var.mickeysLimitX
+
+var.Yfrom = -var.mickeysLimitY
+var.Yto =  var.mickeysLimitY
+
+var.fullMouseClickedX = false
+var.fullMouseClickedY = false
+
+
+/*** CONFIG ***/
+var.freeLookOnStill = false
+// since v4_b6 this changed a little, free y movement only when NOT walking
+var.freeYLook = false
+var.fullMouseAlwaysOff = true
+var.skipMouseButtons = true
+
+// Disabled by default
+var.enabled = 0
+var.fullMouseOn = 0
+var.SlashOncePressed = false
+
+      //ei kauhean smooth F1, smoot f1
+      /*
+      key.RightAlt+key.1 = true
+      wait 20ms
+      key.RightAlt+key.1 = false
+         
+      key.f12 = true
+      wait 20ms
+      key.f12 = false
+      */
+ }
+
+// faster mouse
+if key.RightAlt && key.m
+  // jos 1 on true niin enabled, jos 0 niin false
+  if key.1
+     var.mickeysLimitX = 3400
+     var.mickeysLimitY = 1000
+  endif
+endif
+
+if key.RightAlt && key.f
+  // jos 1 on true niin enabled, jos 0 niin false
+   //todo why this is not working anymore
+   var.freeLookOnStill = key.1
+   //remove and fix
+   //var.freeYLook = true
+endif
+
+// fullmousekey skip mouse buttons
+if key.RightAlt && key.b
+   var.skipMouseButtons = key.1
+   //remove and fix
+   //var.freeYLook = true
+endif
+
+/*
+   // free Y look
+   key.RightAlt = true
+   key.L = true
+   key.y = true
+   key.1 = true
+   wait 1000ms
+   key.RightAlt = false
+   key.L = false
+   key.y = false
+   wait 1000ms
+   key.1 = false
+*/
+if(key.RightAlt && key.L && key.y)
+   // jos 1 on true niin enabled, jos 0 niin false
+   var.freeYLook = key.1
+endif
+
+if(key.RightAlt && key.m && key.n)
+   // jos 1 on true niin enabled, jos 0 niin false
+   var.fullMouseAlwaysOff = key.1
+endif
+
+
+if key.RightAlt
+   if key.1
+      var.sensitivity = 120 // raised this by 20
+   endif
+   if key.2
+      var.sensitivity = 140
+   endif
+   if key.3
+      var.sensitivity = 160
+   endif
+   if key.4
+      var.sensitivity = 180
+   endif
+   if key.5
+      var.sensitivity = 200
+   endif
+   if key.6
+      var.sensitivity = 220
+   endif
+   if key.7
+      var.sensitivity = 240
+   endif
+   if key.8
+      var.sensitivity = 240
+   endif
+endif
+
+ if key.Insert
+    var.smoothMouse = false
+ else
+    var.smoothMouse = true
+ endif
+
+if odd(var.enabled)
+
+PIE.FrameRate = 450 hz
+
+if key.w || key.s
+   var.walking = true
+endif
+
+if var.freeLookOnStill
+
+    //removed tab, mouse middle because of strange problems
+    if var.skipMouseButtons == true
+
+       //var.forcedFullMouse = (key.tab || key.Dot)
+       //var.fullMouseKey = (key.tab || key.Dot || !key.w)
+       var.forcedFullMouse = (key.Dot)
+       var.fullMouseKey = (key.Dot || !key.w)
+    else
+       var.forcedFullMouse = (key.Dot)
+       var.fullMouseKey = (key.Dot || !key.w)
+
+       //var.forcedFullMouse = (key.tab || mouse.LeftButton || mouse.RightButton || mouse.MiddleButton || key.Dot)
+       //var.fullMouseKey = (key.tab || mouse.LeftButton || mouse.RightButton || mouse.MiddleButton || key.Dot || !key.w)
+    endif
+
+    if key.s
+       var.fullMouseKey = false
+    endif
+
+    if key.A || key.d
+       var.fullMouseKey = false
+    endif
+
+
+    // jos pää kääntyneenä kun kävely loppuu niin odotellaan silti pää keskiasentoon
+    if var.fullMouseKey && var.walking == true
+       var.waitForZero = true
+    endif
+
+    if var.forcedFullMouse
+       var.waitForZero = false
+       // BUG FIXED: key.s pohjassa niin napista huolimatta ei ollut fullmouse
+       var.fullMouseKey = true
+    endif
+
+    // TODO: Tulisiko myös kun päästetään hiiren napista tms niin odotella takaisin keskelle? Kuulostaisi järkevältä
+else
+    if var.fullMouseAlwaysOff == false
+
+       if var.skipMouseButtons == true
+          var.fullMouseKey = (key.tab || key.Dot)
+       else
+          //var.fullMouseKey = (key.tab || mouse.LeftButton || mouse.MiddleButton || mouse.RightButton || key.Dot)
+          var.fullMouseKey = (key.tab ||  key.Dot)
+       endif
+    endif
+
+    var.waitForZero = false
+endif
+
+
+if odd(var.fullMouseOn)
+   var.fullMouseKey = true
+endif
+/*
+if key.A || key.d
+   var.fullMouseKey = false
+endif
+ */
+// *** Headmouse X and Y ***
+var.X = (TrackIR.RealYaw * 100)
+var.XSmooth = smooth(var.X)
+
+var.XMoveMouse = var.fullMouseKey
+
+if var.freeYLook && var.walking == false
+   var.YMoveMouse = true
+else
+    var.YMoveMouse = var.fullMouseKey
+endif
+
+
+// TODO: this is related to tarckir speed selected. Do something
+if var.X > -var.sensitivity && var.X < var.sensitivity
+   var.waitForZero = false
+   var.walking = false
+endif
+
+if var.waitForZero
+   if !var.freeYLook
+      var.YMoveMouse = false
+   endif
+   var.XMoveMouse = false
+endif
+//******* X-axle ******//
+
+if var.XMoveMouse == false
+ if key.dot
+   if var.X < -100
+      if var.XSmooth < var.XLast
+         var.XMoveMouse = True
+      endif
+   else if var.X > 100
+      if var.XSmooth > var.XLast
+         var.XMoveMouse = True
+      endif
+   endif
+ else
+   if var.X < 0
+      if var.XSmooth < var.XLast
+         var.XMoveMouse = True
+      endif
+   else if var.X > 0
+      if var.XSmooth > var.XLast
+         var.XMoveMouse = True
+      endif
+   endif
+ endif
+endif
+
+if key.Comma
+   var.XMoveMouse = false
+endif
+
+var.XLast = var.XSmooth
+
+if(var.XMoveMouseLast == false && var.XMoveMouse  == true)
+   var.XDegMin = var.degreeLimitX - var.XCentre
+   var.XDegMax = var.degreeLimitX + var.XCentre
+
+   var.Xfrom = -var.mickeysLimitX + FakeMouse.DirectInputX
+   var.Xto = var.mickeysLimitX + FakeMouse.DirectInputX
+endif
+
+var.XMoveMouseLast = var.XMoveMouse
+
+if var.XMoveMouse
+
+if var.smoothMouse == true
+   var.Xsm = smooth(var.X, 3)
+   var.Xnow = MapRange(var.Xsm, -var.XDegMin degrees,var.XDegMax degrees, var.Xfrom mickeys,var.Xto mickeys)
+else
+    var.Xnow = MapRange(var.X, -var.XDegMin degrees,var.XDegMax degrees, var.Xfrom mickeys,var.Xto mickeys)
+endif
+
+   FakeMouse.DirectInputX = var.Xnow
+else
+   var.XCentre = var.X
+endif
+
+//******* Y-axle ******//
+// NOTE: TrackIR Pitch is inverted
+var.Y = (TrackIR.RealPitch * 100)
+var.YSmooth = smooth(var.Y)
+
+if var.YMoveMouse == false
+ if key.dot
+   if var.Y < -60
+      if var.YSmooth < var.YLast
+         var.YMoveMouse = True
+      endif
+   else if var.Y > 60
+      if var.YSmooth > var.YLast
+         var.YMoveMouse = True
+      endif
+   endif
+ else
+   if var.Y < 0
+      if var.YSmooth < var.YLast
+         var.YMoveMouse = True
+      endif
+   else if var.Y > 0
+      if var.YSmooth > var.YLast
+         var.YMoveMouse = True
+      endif
+   endif
+ endif
+endif
+
+if key.Comma
+   var.YMoveMouse = false
+endif
+
+var.YLast = var.YSmooth
+
+
+
+if(var.YMoveMouseLast == false && var.YMoveMouse == true)
+   var.YDegMin = var.degreeLimitY - var.YCentre
+   var.YDegMax = var.degreeLimitY + var.YCentre
+
+   var.Yfrom = -var.mickeysLimitY + FakeMouse.DirectInputY
+   var.Yto =  var.mickeysLimitY + FakeMouse.DirectInputY
+endif
+
+var.YMoveMouseLast = var.YMoveMouse
+
+if var.YMoveMouse
+
+
+if var.smoothMouse
+   var.Ysm = smooth(var.Y, 3)
+   var.Ynow = MapRange(Var.Ysm, -var.YDegMin degrees, var.YDegMax degrees, var.Yfrom mickeys,var.Yto mickeys)
+else
+    var.Ynow = MapRange(Var.Y, -var.YDegMin degrees, var.YDegMax degrees, var.Yfrom mickeys,var.Yto mickeys)
+endif
+
+   FakeMouse.DirectInputY = var.Ynow
+else
+   var.YCentre = var.Y
+endif
+
+else
+    key.CapsLock = false
+    pie.FrameRate = 30 hz
+endif
+
+// Paramaters set on runtime
+
+// On
+if key.Home && var.SlashOncePressed
+   var.enabled = 1
+   var.fullMouseOn = 0
+end if
+
+// headmouse on
+if key.PageDown && var.SlashOncePressed
+   var.enabled = 1
+
+   if var.fullMouseAlwaysOff == true
+       var.fullMouseOn = 0
+   else
+       var.fullMouseOn = 1
+   endif
+end if
+
+if key.Slash
+   var.SlashOncePressed = true
+endif
+
+// Off
+if key.End
+   var.enabled = 0
+endif
+
+debug = "Enabled=" + odd(var.enabled) + " | freeLookOnStill=" + var.freeLookOnStill + " | freeYLook=" + var.freeYLook + " | var.fullMouseKey=" + var.fullMouseKey + " | var.fullMouseAlwaysOff=" + var.fullMouseAlwaysOff + " | CapsLock=" + key.CapsLock + " | var.skipMouseButtons=" +  var.skipMouseButtons + " Deltax=" + delta(var.XSmooth)
+
+
+//debug = TrackIR.RealYaw + "| var.X=" + var.X + "|" + mouse.DirectInputX + " - " + TrackIR.RealPitch + "| var.freeLookOnStill=" + var.freeLookOnStill + " | forcedFullMouse=" + var.forcedFullMouse + " | var.sensitivity=" + var.sensitivity + " | PIE.FrameRate=" + PIE.FrameRate
+

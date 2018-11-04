@@ -1,0 +1,804 @@
+﻿/*
+
+key.Backslash           :  Calibrate
+key.Home                :  Enable
+key.End                 :  Disable
+key.PageDown            :  Disable
+
+key.Comma               : Peek mode, replacec a with q and d with e
+*/
+
+// End is master switch off
+if key.End && key.RightAlt
+   chain("E:\progs\GlovePIE045Free\omat\GameWASD_v5_b1.pie")
+endif
+
+// End master switch off
+if key.c && key.Delete
+   ExitPie
+endif
+
+
+if (starting){
+   // for magic
+   var.resetCentreZ = 0.0
+   var.resetCentreY = 0.0
+   // was 0.05
+   var.resetLimitForward = 0.03
+   // was -0.10
+   var.resetLimitBackward = -0.10
+   var.startLine = var.resetLimitForward
+
+   var.cpzeroed = true;
+
+   var.runOn = false
+   var.pedalszeroed = true
+   var.backPedalPressed = false
+   var.crouchToggled = false
+
+   var.pedalJumpOn = false
+   var.pedalRunOn = false
+
+   /* *** CONFIG ** */
+   var.headRunEnabled = false
+   var.walkEnabled = false
+   var.strafeWalkEnabled = false    // !!
+   var.runToggleEnabled = false
+   var.pedalCombinedJumpEnabled = false
+   var.crouchCombinedProne = false
+   var.peekEnabled = false
+   var.standJumpAndCrouch = false
+
+   var.crouchAltKey = false
+   var.useCalibration = true
+
+   // Disabled by default
+   var.enabled = 0  // !!
+   var.KeysToMove = 0  // !!
+   var.StrafeEnabled = 0
+   // debug
+
+   /*
+      var.enabled = 1
+      var.KeysToMove = 1
+
+
+      key.RightAlt+key.0 = true
+      wait 20ms
+      key.RightAlt+key.0 = false
+
+   
+      key.f12 = true
+      wait 20ms
+      key.f12 = false
+   */
+
+   // default calibrated values
+   var.dwDeg = 4
+   var.dwY = 0.02
+
+   var.upDeg = 2
+   var.upY = 0.00
+
+   var.forceCalibrateDown = true
+   var.forceCalibrateUp = true
+
+   /*****************************************/
+
+   var.leftDeg = -8
+   var.leftY = -0.20
+
+   var.rightDeg = 8
+   var.rightY = 0.20
+
+   var.forceCalibrateLeft = true
+   var.forceCalibrateRight = true
+
+   // jotta ei muiden kalibrointi häiritsisi yhden akselin kalibrointia
+   var.allCalibrated = false
+
+   var.jump = false
+   var.YOver = false
+   var.YUnder = false
+}
+
+if key.Home && key.RightAlt
+   var.enabled = 1
+
+   key.a = false
+   key.d = false
+   key.w = false
+   key.s = false
+   key.Shift = false
+
+end if
+
+// TODO: konffattavaksi
+// onko fullmouse kun ei liikuta
+// tuo waitForZero JOS edes tarvetta missään
+
+
+//debug = "Movement enabled=" + odd(var.KeysToMove) + " | runOn=" + var.runOn + " | jumpOn=" + var.pedalJumpOn + " | pedalRunOn=" + var.pedalRunOn + " | " + var.RealPedalForward + " | shift=" + key.shift + " | space=" + key.space + " | ctrl=" + key.c + " | " + var.RealPedalBackward
+
+/*
+// how to enable/disable
+
+
+press(key.RightAlt)
+press(key.w)
+press(key.1)
+wait 20ms
+release(key.RightAlt)
+release(key.w)
+release(key.1)
+wait 2000ms
+
+press(key.RightAlt)
+press(key.w)
+wait 20ms
+release(key.RightAlt)
+release(key.w)
+wait 20ms
+
+*/
+
+// "Simple" config
+
+//
+if(key.RightAlt && key.k)
+  // jos 1 on true niin enabled, jos 0 niin false
+   var.walkEnabled = key.1
+endif
+
+if(key.RightAlt && key.c)
+   var.crouchAltKey = key.1
+endif
+
+if(key.RightAlt && key.c && key.j)
+   var.pedalCombinedJumpEnabled = key.1
+endif
+
+if(key.RightAlt && key.p)
+   var.peekEnabled = key.1
+endif
+
+if(key.RightAlt && key.h)
+   var.headRunEnabled = key.1
+endif
+
+//set values to up and down calibrations
+if key.Backslash
+   var.useCalibration = true
+
+   var.forceCalibrateDown = true
+   var.forceCalibrateUp = true
+
+   var.forceCalibrateLeft = true
+   var.forceCalibrateRight = true
+
+   var.allCalibrated = false
+
+   //debugprint("CALIBRATE ON!")
+   say("calibrating")
+
+   key.f12 = true
+   wait 20ms
+   key.f12 = false
+   
+   var.dwDeg = 0
+   var.dwY = 0.00
+
+   var.upDeg = 0
+   var.upY = 0.00
+
+   var.leftDeg = 0
+   var.leftY = 0.00
+
+   var.rightDeg = 0
+   var.rightY = 0.00   
+endif
+
+if odd(var.enabled)
+
+pie.FrameRate = 60 hz
+
+var.Y = trackir.RealY * 100
+var.realz = TrackIR.RealZ
+
+var.yawDelta = delta(TrackIR.RealYaw*100)
+var.PitchDelta = delta(TrackIR.RealPitch*100)
+var.YDelta = delta(var.Y)
+
+// Korjaa vääristymää zetassa kun kääntää päätä
+
+if var.useCalibration = true
+   //vasen calibrointi
+   if var.forceCalibrateLeft == true && TrackIR.RealYaw < -5
+      var.leftDeg = TrackIR.RealYaw
+      var.leftY = var.realz
+
+      //debugPrint("LEFT calibrated: " + var.leftDeg + ", " + var.leftY)
+      var.forceCalibrateLeft = false
+   endif
+
+   if TrackIR.RealYaw < 0 && var.allCalibrated
+      var.correctionLeft = MapRange(TrackIR.RealYaw, -var.leftDeg, 0, var.leftY, 0.00)
+      var.realz = var.realz - abs(var.correctionLeft)
+   endif
+
+
+   //oikea calibrointi
+   if var.forceCalibrateRight == true && TrackIR.RealYaw > 5
+      var.rightDeg = TrackIR.RealYaw
+      var.rightY = var.realz
+
+      //debugPrint("RIGHT calibrated: " + var.rightDeg + ", " + var.rightY)
+      var.forceCalibrateRight = false
+   endif
+
+   if TrackIR.RealYaw > 0 && var.allCalibrated
+      var.correctionRight = MapRange(TrackIR.RealYaw, 0, var.rightDeg, 0.00, var.rightY)
+      var.realz = var.realz - abs(var.correctionRight)
+   endif
+
+   // ALAS CALIBROINTI
+   if var.forceCalibrateDown == true && TrackIR.RealPitch > 0.6
+      var.dwDeg = TrackIr.RealPitch
+      var.dwY = var.realz
+
+      //debugPrint("DOWN calibrated: " + var.dwDeg + ", " + var.dwY)
+
+      var.forceCalibrateDown = false
+   endif
+
+   // YLÖS CALIBROINTI
+   if var.forceCalibrateUp == true && TrackIR.RealPitch < -0.6
+      var.upDeg = TrackIr.RealPitch
+      var.upY = var.realz
+
+      //debugPrint("UP calibrated: " + var.upDeg + ", " + var.upY)
+
+      var.forceCalibrateUp = false
+   endif
+
+
+   // ALAS
+   if TrackIR.RealPitch > 0 && var.allCalibrated
+      var.correctionDown = MapRange(TrackIR.RealPitch, var.dwDeg, -var.dwDeg, -var.dwY, var.dwY)
+      var.realz = var.realz - abs(var.correctionDown)
+      //YLÖS
+   else if TrackIR.RealPitch < 0 && var.allCalibrated
+      var.correctionUp = MapRange(TrackIR.RealPitch, -var.upDeg, var.upDeg, var.upY, -var.upY)
+      var.realz = var.realz - abs(var.correctionUp)
+   endif
+
+//
+endif
+
+if var.forceCalibrateRight == false && var.forceCalibrateLeft == false && var.forceCalibrateUp == false && var.forceCalibrateDown == false
+   if var.allCalibrated == false
+      say("Ready")
+
+      key.end = true
+      wait 40ms
+      key.end = false
+
+      key.Slash = true
+      wait 40ms
+      key.Slash = false
+   endif
+
+   var.allCalibrated = true
+endif
+
+//debug = var.realz + "__REAL=" + trackir.RealZ
+var.Z = var.realz //TrackIR.RealZ
+
+// NOTE: Trying smoothing if it helps
+//var.zDelta = delta(var.Z*100)
+var.zDelta = delta(smooth(var.Z*100))
+
+var.yawDeltaOver = false
+var.pitchDeltaOver = false
+var.otherDeltasOver = false
+
+var.zDeltaOver = false
+var.zDeltaOverMax = false
+var.zDeltaUnder = false
+
+
+if (var.yawDelta > 10 || var.yawDelta < -10)
+   var.yawDeltaOver = true
+   var.otherDeltasOver = true
+endif
+
+if (var.PitchDelta > 10 || var.PitchDelta < -10)
+   var.pitchDeltaOver = true
+   var.otherDeltasOver = true
+endif
+
+if var.zDelta > 0.2
+   var.zDeltaOver = true
+else if var.zDelta < -0.6
+   var.zDeltaUnder = true
+endif
+
+if var.zDelta > 0.5
+   var.zDeltaOverMax = true
+endif
+
+if var.zDeltaOver
+   var.zDeltaOver = !var.otherDeltasOver
+endif
+
+if var.zDeltaUnder
+   var.zDeltaUnder = !var.otherDeltasOver
+endif
+
+
+if odd(var.KeysToMove) && var.allCalibrated
+
+//key.NumLock = true
+// tämä asetetaan aina niin mikään ei siis muutu TODO TODO
+//var.startLine = var.resetLimitForward
+
+var.onResetZone = (var.Z > var.resetLimitBackward && var.Z < var.resetLimitForward)
+// Tämä siis jolloin käytettäisiin esim ctrl kävelemään norminopeutta hitaampaa
+var.onWalkForwardZone = (var.Z < var.startLine + 0.1) && (var.Z > var.startLine)  && var.onResetZone == false && var.walkEnabled
+var.onWalkBackwardZone = (var.Z > var.startLine - 0.3) && (var.Z < var.startLine) && var.onResetZone == false && var.walkEnabled
+var.onRunZone = (var.Z > var.startLine + 0.15) && var.headRunEnabled
+
+// enable
+
+
+if var.onResetZone
+
+   key.w = false
+   key.s = false
+
+   if var.walkEnabled
+      key.c = false
+   endif
+
+   if var.headRunEnabled
+      var.shift = false
+   endif
+
+else
+    if (var.zDeltaOver && var.Z > var.resetCentreZ) && key.w == false // || (var.Z > var.resetLimitForward)
+       key.w = true
+       //var.startLine = var.Z
+    endif
+
+    if (var.zDeltaUnder && var.Z < var.resetLimitBackward) && key.s == false // && var.Z < 0)
+       key.s = true
+    endif
+endif
+
+
+if key.w
+   //kaikki pois
+   if var.zDeltaUnder
+      //debugprint("W DELTAUNDER")
+      key.w = false
+      key.s = false
+
+      if var.walkEnabled
+         key.c = false
+      endif
+
+      if var.headRunEnabled
+         var.shift = false
+      endif
+   else
+       if var.onWalkForwardZone
+          if var.walkEnabled && key.c == false && key.shift = false // NOTE: tämä koska jos käytetään juoksua muualta niin ctrl voi sekoittaa
+             key.c = true
+          endif
+
+          if var.headRunEnabled
+             var.shift = false
+          endif
+       else
+           if var.walkEnabled && key.c
+              key.c = false
+           endif
+       endif
+
+       if var.onRunZone
+          if key.shift == false
+             var.runSettedOnForward = true
+             key.shift = true
+          endif
+       endif
+   endif
+endif
+
+if var.runSettedOnForward && var.onRunZone == false
+   var.runSettedOnForward = false
+   if var.headRunEnabled
+      key.shift = false
+   endif
+endif
+
+if key.s
+   //kaikki pois
+   //if var.zDeltaOver
+   if var.zDeltaOverMax
+      //debugprint("S DELTAOVERMAX")
+
+      key.w = false
+      key.s = false
+
+      if var.walkEnabled
+         key.c = false
+      endif
+
+      /*
+      if var.headRunEnabled
+         var.shift = false
+      endif
+      */
+   else
+       if var.onWalkBackwardZone
+          if var.walkEnabled && key.c == false && key.shift = false // NOTE: tämä koska jos käytetään juoksua muualta niin ctrl voi sekoittaa
+             key.c = true
+          endif
+
+          /*
+          if key.Shift
+             key.Shift = false
+          endif
+          */
+       else
+           if var.walkEnabled && key.c
+              key.c = false
+           endif
+       endif
+
+       /*
+       if var.onRunZone
+          if key.shift == false
+             key.shift = true
+          endif
+       endif
+       */
+   endif
+endif
+
+// standing space and crouch
+if var.standJumpAndCrouch == true
+if (var.YDelta) > 0.07
+   if var.YOver == false
+      var.lastY = var.Y
+   endif
+
+   var.YOver = true
+else if (var.YDelta) < -0.05
+   var.YUnder = true
+endif
+
+if var.YOver && var.Y > var.resetCentreY
+   var.crouchSetOnHead = false
+
+   if var.yUnder
+      var.jump = false
+      var.yUnder = false
+      var.yOver = false
+      var.jumpSetOnHead = true
+   else
+      var.jump = true
+   endif
+else
+    if var.yUnder && var.Y < var.resetCentreY - 0.10
+       var.crouch = true
+    else
+        var.crouch = false
+        var.crouchSetOnHead = false
+    endif
+endif
+
+if var.jump
+   if key.space == false
+      key.space = true
+   endif
+else if var.jumpSetOnHead
+     var.jumpSetOnHead = false
+     key.space = false
+endif
+
+
+if var.crouch && var.crouchSetOnHead == false
+   key.c = true
+   wait 10ms
+   key.c = false
+
+   var.crouch = false
+   var.crouchSetOnHead = true
+endif
+
+endif
+
+
+// TODO: KESKEN!!!
+if odd(var.StrafeEnabled) // || key.c
+// vasen
+
+if TrackIR.RealRoll > 6 && < 15 then
+   if var.strafeWalkEnabled && (var.onWalkForwardZone || var.onWalkBackwardZone || var.onResetZone)
+      key.c = true
+   endif
+
+   if key.Comma
+      key.q = true
+      var.qSet = true
+   else
+       key.a = true
+       var.aSet = true
+   endif
+
+   var.rollLeft = true;
+
+   if var.settedOnLeftRoll == true
+         if var.headRunEnabled
+            key.shift = false
+         else
+            //key.space = false
+         endif
+
+       var.settedOnLeftRoll = false
+    endif
+else if TrackIR.RealRoll > 15
+   if key.Comma
+      key.q = true
+      var.qSet = true
+   else
+       key.a = true
+       var.aSet = true
+   endif
+
+   if var.headRunEnabled
+       if key.shift == false
+          key.shift = true
+          var.settedOnLeftRoll = true
+       endif
+   else
+       if key.space == false
+          //key.space = true
+          var.settedOnLeftRoll = true
+       endif
+   endif
+
+   var.rollLeft = true;
+else
+    if var.rollLeft == true
+       var.rollLeft = false
+
+       if var.aSet
+          Key.a = false
+       endif
+
+       if var.qSet
+          Key.q = false
+       endif
+
+       if var.headRunEnabled
+          key.shift = false
+       else
+          //key.space = false
+       endif
+
+       var.aSet = false
+       var.qSet = false
+    endif
+
+    var.settedOnLeftRoll = false
+endif
+
+// oikea
+if TrackIR.RealRoll < -6 && > -15 then
+   if var.strafeWalkEnabled && (var.onWalkForwardZone || var.onWalkBackwardZone || var.onResetZone)
+      key.c = true
+   endif
+
+   if key.Comma
+      key.e = true
+      var.eSet = true
+   else
+       key.d = true
+       var.dSet = true
+   endif
+
+   var.rollRight = true;
+
+   if var.settedOnRightRoll == true
+         if var.headRunEnabled
+            key.shift = false
+         else
+            //key.space = false
+         endif
+
+       var.settedOnRightRoll = false
+    endif
+else if TrackIR.RealRoll < -15
+
+   if key.Comma
+      key.e = true
+      var.eSet = true
+   else
+       key.d = true
+       var.dSet = true
+   endif
+
+   if var.headRunEnabled
+       if key.shift == false
+          key.shift = true
+          var.settedOnRightRoll = true
+       endif
+   else
+       if key.space == false
+          //key.space = true
+          var.settedOnRightRoll = true
+       endif
+   endif
+
+   var.rollRight = true;
+else
+    if var.rollRight == true
+       var.rollRight = false
+
+       if var.dSet
+          Key.d = false
+       endif
+
+       if var.eSet
+          Key.e = false
+       endif
+
+       if var.headRunEnabled
+          key.shift = false
+       else
+          //key.space = false
+       endif
+       var.dSet = false
+       var.eSet = false
+    endif
+
+    var.settedOnRightRoll = false
+endif
+
+
+if var.peekEnabled
+// peek right
+if TrackIR.RealX > 0.20 && < 0.35 && (TrackIR.RealRoll < 5 && TrackIR.RealRoll > -5) then
+   key.c = true
+   Key.D = true;
+   var.peekLeft = true;
+else if TrackIR.RealX > 0.35 then
+   key.c = true
+   Key.D = true;
+   var.peekLeft = true;
+else
+    if var.peekLeft == true
+       var.peekLeft = false
+       Key.d = false
+       key.c = false
+    endif
+endif
+
+// peek left
+if TrackIR.RealX < -0.20 && > -0.35 && (TrackIR.RealRoll < 5 && TrackIR.RealRoll > -5) then
+   key.c = true
+   Key.a = true
+   var.peekRight = true;
+else if TrackIR.RealX < -0.35 then
+   key.c = true
+   Key.a = true
+   var.peekRight = true;
+else
+    if var.peekRight == true
+       var.peekRight = false
+       Key.a = false
+       key.c = false
+    endif
+endif
+// peekEnabled
+endif
+
+// StrafeEnabled
+endif
+
+else
+//key.NumLock = false
+// Keystomove
+endif
+
+
+//debug = var.zDelta + " | var.resetCentreZ=" + var.resetCentreZ + " | var.resetLimitForward=" + var.resetLimitForward + " | var.resetLimitBackward=" + var.resetLimitBackward + " | Timer=" + var.centerTimer + " | var.Z=" + var.Z  + " | key.w=" + key.w  + " | key.s=" + key.s + " | onResetZone=" + var.onResetZone
+
+//debug = var.zDelta + " | var.zDeltaOver=" + var.zDeltaOver + " | var.zDeltaUnder=" + var.zDeltaUnder + " | var.PitchDelta=" + var.PitchDelta + " | " + var.test + " | key.w=" + key.w  + " | key.s=" + key.s + " | onResetZone=" + var.onResetZone
+ // enabled
+else
+    pie.FrameRate = 10 hz
+endif
+
+// head on
+//if Clicked(key.Home) || Clicked(F12) || Clicked(key.PageUp)
+if (Clicked(F12) && var.allCalibrated) || key.Home
+//   var.KeysToMove = 1
+
+   if var.allCalibrated == false
+      say("Calibrate")
+
+      key.f12 = true
+      wait 40ms
+      key.f12 = false
+
+      var.enabled = 1
+   else
+   //say("On")
+   // jotta ei kontrollit nostaessa mene nollille mikään
+   if var.KeysToMove = 0
+      var.KeysToMove = 1
+      var.StrafeEnabled = 1
+      var.enabled = 1
+      key.a = false
+      key.d = false
+      key.w = false
+      key.s = false
+      key.Shift = false
+      key.c = false
+      key.space = false
+      var.Z = TrackIR.RealZ
+
+      var.resetCentreZ = var.Z
+      var.resetCentreY = var.Y
+      var.resetLimitForward = var.Z + 0.03
+      var.resetLimitBackward = var.Z - 0.10
+      var.startLine = var.resetLimitForward
+
+      var.jump = false
+      var.YOver = false
+      var.YUnder = false
+      /*
+
+   // for magic
+   var.resetCentreZ = 0.0
+   var.resetLimitForward = 0.05
+   var.resetLimitBackward = -0.10
+   var.startLine = var.resetLimitForward
+      */
+
+
+   endif
+   endif
+
+end if
+
+// head off
+if key.PageDown || key.End
+   var.KeysToMove = 0
+   var.StrafeEnabled = 0
+   key.a = false
+   key.d = false
+   key.w = false
+   key.s = false
+   // Removed these, maybe causing problems
+   //key.Shift = false
+   key.c = false
+
+   //say("Off")
+   //midi.BassDrum1 = true
+endif
+
+//debug = "var.KeysToMove=" + var.KeysToMove + " | walkEnabled=" + var.walkEnabled + " | TrackIR.RealZ=" + TrackIR.RealZ + " | var.correctionLeft=" + abs(var.correctionLeft) + " | var.correctionRight=" + abs(var.correctionRight) + " | var.correctionUp=" + abs(var.correctionUp) + " | var.correctionDown=" + abs(var.correctionDown) + " | var.zDelta=" + var.zDelta + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw + " | var.allCalibrated=" + var.allCalibrated
+
+debug = var.forceCalibrateRight + "  |   " + var.forceCalibrateLeft + "  |   " + var.forceCalibrateUp + "  |   " + var.forceCalibrateDown
+
+
+
+
+
+
+
+
