@@ -10,7 +10,7 @@ key.Comma               : Peek mode, replacec a with q and d with e
 
 // End is master switch off
 if key.End && key.RightAlt
-   chain("E:\progs\GlovePIE045Free\omat\GameWASD_v5_b1.pie")
+   chain("D:\progs\GlovePIE045Free\omat\GameWASD_v5_b1.pie")
 endif
 
 // End master switch off
@@ -200,7 +200,7 @@ endif
 
 if odd(var.enabled)
 
-pie.FrameRate = 60 hz
+pie.FrameRate = 90 hz
 
 var.Y = trackir.RealY * 100
 var.realz = TrackIR.RealZ
