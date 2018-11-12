@@ -181,6 +181,12 @@ if key.Backslash
    //debugprint("CALIBRATE ON!")
    say("calibrating")
 
+   key.end = true
+   wait 20ms
+   key.end = false
+
+   wait 40ms
+
    key.f12 = true
    wait 20ms
    key.f12 = false
