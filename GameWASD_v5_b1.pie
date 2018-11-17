@@ -206,7 +206,7 @@ endif
 
 if odd(var.enabled)
 
-pie.FrameRate = 90 hz
+pie.FrameRate = 60 hz
 
 var.Y = trackir.RealY * 100
 var.realz = TrackIR.RealZ
