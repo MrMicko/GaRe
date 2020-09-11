@@ -20,6 +20,8 @@ endif
 
 
 if (starting){
+   var.calibrationLimitYaw = 5
+   var.calibrationLimitPitch = 0.6
    // for magic
    var.resetCentreZ = 0.0
    var.resetCentreY = 0.0
@@ -112,6 +114,17 @@ if key.Home && key.RightAlt
    key.Shift = false
 
 end if
+
+if key.RightAlt
+   if key.0
+      var.calibrationLimitYaw = 2
+      var.calibrationLimitPitch = 0.6
+   endif
+   if key.1
+      var.calibrationLimitYaw = 5
+      var.calibrationLimitPitch = 0.6
+   endif
+endif
 
 // TODO: konffattavaksi
 // onko fullmouse kun ei liikuta
@@ -216,10 +229,11 @@ var.PitchDelta = delta(TrackIR.RealPitch*100)
 var.YDelta = delta(var.Y)
 
 // Korjaa vääristymää zetassa kun kääntää päätä
+// TODO: sensitivity pitää ottaa huomioon
 
 if var.useCalibration = true
    //vasen calibrointi
-   if var.forceCalibrateLeft == true && TrackIR.RealYaw < -5
+   if var.forceCalibrateLeft == true && TrackIR.RealYaw < -var.calibrationLimitYaw
       var.leftDeg = TrackIR.RealYaw
       var.leftY = var.realz
 
@@ -234,7 +248,7 @@ if var.useCalibration = true
 
 
    //oikea calibrointi
-   if var.forceCalibrateRight == true && TrackIR.RealYaw > 5
+   if var.forceCalibrateRight == true && TrackIR.RealYaw > var.calibrationLimitYaw
       var.rightDeg = TrackIR.RealYaw
       var.rightY = var.realz
 
@@ -248,7 +262,7 @@ if var.useCalibration = true
    endif
 
    // ALAS CALIBROINTI
-   if var.forceCalibrateDown == true && TrackIR.RealPitch > 0.6
+   if var.forceCalibrateDown == true && TrackIR.RealPitch > var.calibrationLimitPitch
       var.dwDeg = TrackIr.RealPitch
       var.dwY = var.realz
 
@@ -258,7 +272,7 @@ if var.useCalibration = true
    endif
 
    // YLÖS CALIBROINTI
-   if var.forceCalibrateUp == true && TrackIR.RealPitch < -0.6
+   if var.forceCalibrateUp == true && TrackIR.RealPitch < -var.calibrationLimitPitch
       var.upDeg = TrackIr.RealPitch
       var.upY = var.realz
 
@@ -799,7 +813,9 @@ endif
 
 //debug = "var.KeysToMove=" + var.KeysToMove + " | walkEnabled=" + var.walkEnabled + " | TrackIR.RealZ=" + TrackIR.RealZ + " | var.correctionLeft=" + abs(var.correctionLeft) + " | var.correctionRight=" + abs(var.correctionRight) + " | var.correctionUp=" + abs(var.correctionUp) + " | var.correctionDown=" + abs(var.correctionDown) + " | var.zDelta=" + var.zDelta + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw + " | var.allCalibrated=" + var.allCalibrated
 
-debug = var.forceCalibrateRight + "  |   " + var.forceCalibrateLeft + "  |   " + var.forceCalibrateUp + "  |   " + var.forceCalibrateDown
+//debug = var.forceCalibrateRight + "  |   " + var.forceCalibrateLeft + "  |   " + var.forceCalibrateUp + "  |   " + var.forceCalibrateDown
+
+debug = var.correctionLeft + "  |   " + var.correctionUp + "  |   " + var.correctionRight + "  |   " + var.correctionDown + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw
 
 
 

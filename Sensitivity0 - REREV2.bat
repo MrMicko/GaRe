@@ -4,7 +4,7 @@ REM EnablePedals.lnk
 start ..\..\piefree.exe -GameWASD_v5_b1.pie  /tray
 start ..\..\piefree.exe -GameMouse_HYDRA_V5_B1.pie  /tray
 timeout 1
-start ..\..\piefree.exe -Sensitivity0.pie  /tray
+start ..\..\piefree.exe -SensitivityREREV2.pie  /tray
 Choice /M "Kill Pies?"
 If Errorlevel 2 Goto No
 If Errorlevel 1 Goto Yes

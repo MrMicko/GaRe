@@ -28,7 +28,7 @@ var.degreeLimitY = 60
 var.mickeysLimitX = 1500
 var.mickeysLimitY = 1500
 
-var.sensitivity = 140  //default
+var.sensitivity = 120  //default
 
 var.Xfrom = -var.mickeysLimitX
 var.Xto =  var.mickeysLimitX
@@ -38,7 +38,6 @@ var.Yto =  var.mickeysLimitY
 
 var.fullMouseClickedX = false
 var.fullMouseClickedY = false
-
 
 /*** CONFIG ***/
 var.freeLookOnStill = false
@@ -53,7 +52,7 @@ var.fullMouseOn = 0
 var.SlashOncePressed = false
 
       //ei kauhean smooth F1, smoot f1
-      /*
+      /*** **/
       key.RightAlt+key.1 = true
       wait 20ms
       key.RightAlt+key.1 = false
@@ -61,7 +60,9 @@ var.SlashOncePressed = false
       key.f12 = true
       wait 20ms
       key.f12 = false
-      */
+
+      var.SlashOncePressed = true
+      /*** **/
  }
 
 // faster mouse
@@ -113,8 +114,11 @@ endif
 
 
 if key.RightAlt
+   if key.0
+      var.sensitivity = 90 // added this
+   endif
    if key.1
-      var.sensitivity = 120 // raised this by 20
+      var.sensitivity = 120
    endif
    if key.2
       var.sensitivity = 140
@@ -147,7 +151,38 @@ endif
 
 if odd(var.enabled)
 
-PIE.FrameRate = 450 hz
+PIE.FrameRate = 500 hz
+
+// DEBUG: COMMENT OUT
+/*
+  if key.0
+      PIE.FrameRate = 1000 hz
+   endif
+   if key.1
+      PIE.FrameRate = 100 hz
+   endif
+   if key.2
+      PIE.FrameRate = 200 hz
+   endif
+   if key.3
+      PIE.FrameRate = 300 hz
+   endif
+   if key.4
+      PIE.FrameRate = 400 hz
+   endif
+   if key.5
+      PIE.FrameRate = 500 hz
+   endif
+   if key.6
+      PIE.FrameRate = 600 hz
+   endif
+   if key.7
+      PIE.FrameRate = 700 hz
+   endif
+   if key.8
+      PIE.FrameRate = 800 hz
+   endif
+ */
 
 if key.w || key.s
    var.walking = true
@@ -209,6 +244,10 @@ endif
 if odd(var.fullMouseOn)
    var.fullMouseKey = true
 endif
+
+
+/** DEBUG ONLY: TODO REMOVE **/
+//var.fullMouseKey = key.f
 /*
 if key.A || key.d
    var.fullMouseKey = false
@@ -216,7 +255,15 @@ endif
  */
 // *** Headmouse X and Y ***
 var.X = (TrackIR.RealYaw * 100)
-var.XSmooth = smooth(var.X)
+
+/* DEBUG */
+if var.smoothMouse == true
+   var.XSmooth = smooth(var.X)
+else
+    var.XSmooth = var.X
+endif
+//var.XSmooth = var.X
+//var.XSmooth = smooth(var.X, 2)
 
 var.XMoveMouse = var.fullMouseKey
 
@@ -282,23 +329,20 @@ endif
 var.XMoveMouseLast = var.XMoveMouse
 
 if var.XMoveMouse
-
-if var.smoothMouse == true
-   var.Xsm = smooth(var.X, 3)
-   var.Xnow = MapRange(var.Xsm, -var.XDegMin degrees,var.XDegMax degrees, var.Xfrom mickeys,var.Xto mickeys)
-else
-    var.Xnow = MapRange(var.X, -var.XDegMin degrees,var.XDegMax degrees, var.Xfrom mickeys,var.Xto mickeys)
-endif
-
+   var.Xnow = MapRange(var.XSmooth, -var.XDegMin degrees,var.XDegMax degrees, var.Xfrom mickeys,var.Xto mickeys)
    FakeMouse.DirectInputX = var.Xnow
 else
-   var.XCentre = var.X
+   // DEBUG
+   //var.XCentre = var.X
+   var.XCentre = var.XSmooth
 endif
 
 //******* Y-axle ******//
 // NOTE: TrackIR Pitch is inverted
 var.Y = (TrackIR.RealPitch * 100)
-var.YSmooth = smooth(var.Y)
+/* DEBUG */
+var.YSmooth = smooth(var.Y, 2)
+//var.YSmooth = var.Y
 
 if var.YMoveMouse == false
  if key.dot
@@ -346,7 +390,7 @@ if var.YMoveMouse
 
 
 if var.smoothMouse
-   var.Ysm = smooth(var.Y, 3)
+   var.Ysm = smooth(var.Y, 2)
    var.Ynow = MapRange(Var.Ysm, -var.YDegMin degrees, var.YDegMax degrees, var.Yfrom mickeys,var.Yto mickeys)
 else
     var.Ynow = MapRange(Var.Y, -var.YDegMin degrees, var.YDegMax degrees, var.Yfrom mickeys,var.Yto mickeys)
@@ -390,7 +434,7 @@ if key.End
    var.enabled = 0
 endif
 
-debug = "Enabled=" + odd(var.enabled) + " | freeLookOnStill=" + var.freeLookOnStill + " | freeYLook=" + var.freeYLook + " | var.fullMouseKey=" + var.fullMouseKey + " | var.fullMouseAlwaysOff=" + var.fullMouseAlwaysOff + " | CapsLock=" + key.CapsLock + " | var.skipMouseButtons=" +  var.skipMouseButtons + " Deltax=" + delta(var.XSmooth)
+debug = pie.FrameRate+"  Enabled=" + odd(var.enabled) + " | freeLookOnStill=" + var.freeLookOnStill + " | freeYLook=" + var.freeYLook + " | var.fullMouseKey=" + var.fullMouseKey + " | var.fullMouseAlwaysOff=" + var.fullMouseAlwaysOff + " | var.smoothMouse=" + var.smoothMouse + " | var.skipMouseButtons=" +  var.skipMouseButtons + " Deltax=" + delta(var.XSmooth)
 
 
 //debug = TrackIR.RealYaw + "| var.X=" + var.X + "|" + mouse.DirectInputX + " - " + TrackIR.RealPitch + "| var.freeLookOnStill=" + var.freeLookOnStill + " | forcedFullMouse=" + var.forcedFullMouse + " | var.sensitivity=" + var.sensitivity + " | PIE.FrameRate=" + PIE.FrameRate
