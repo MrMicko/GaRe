@@ -21,14 +21,14 @@ endif
 
 if (starting){
    var.calibrationLimitYaw = 5
-   var.calibrationLimitPitch = 6
+   var.calibrationLimitPitch = 0.6
    // for magic
    var.resetCentreZ = 0.0
    var.resetCentreY = 0.0
    // was 0.05
-   var.resetLimitForward = 0.3
+   var.resetLimitForward = 0.03
    // was -0.10
-   var.resetLimitBackward = -0.50
+   var.resetLimitBackward = -0.10
    var.startLine = var.resetLimitForward
 
    var.cpzeroed = true;
@@ -221,11 +221,11 @@ if odd(var.enabled)
 
 pie.FrameRate = 60 hz
 
-var.Y = trackir.RealY
+var.Y = trackir.RealY * 100
 var.realz = TrackIR.RealZ
 
-var.yawDelta = delta(TrackIR.RealYaw)
-var.PitchDelta = delta(TrackIR.RealPitch)
+var.yawDelta = delta(TrackIR.RealYaw*100)
+var.PitchDelta = delta(TrackIR.RealPitch*100)
 var.YDelta = delta(var.Y)
 
 // Korjaa vääristymää zetassa kun kääntää päätä
@@ -316,7 +316,7 @@ var.Z = var.realz //TrackIR.RealZ
 
 // NOTE: Trying smoothing if it helps
 //var.zDelta = delta(var.Z*100)
-var.zDelta = delta(smooth(var.Z, 2))
+var.zDelta = delta(smooth(var.Z*100))
 
 var.yawDeltaOver = false
 var.pitchDeltaOver = false
