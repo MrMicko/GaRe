@@ -53,7 +53,7 @@ var.fullMouseOn = 0
 var.SlashOncePressed = false
 
       //ei kauhean smooth F1, smoot f1
-      /*
+
       key.RightAlt+key.1 = true
       wait 20ms
       key.RightAlt+key.1 = false
@@ -61,7 +61,7 @@ var.SlashOncePressed = false
       key.f12 = true
       wait 20ms
       key.f12 = false
-      */
+
  }
 
 // faster mouse
@@ -150,10 +150,10 @@ endif
 
 if odd(var.enabled)
 
-PIE.FrameRate = screen.RefreshRate * 2
+PIE.FrameRate = 240 hz
 
 // DEBUG: COMMENT OUT
- /*
+
   if key.0
       PIE.FrameRate = 450 hz
    endif
@@ -181,7 +181,11 @@ PIE.FrameRate = screen.RefreshRate * 2
    if key.8
       PIE.FrameRate = 240 hz
    endif
-   */
+
+
+if key.p
+   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 100
+endif
 
 if key.w || key.s
    var.walking = true
