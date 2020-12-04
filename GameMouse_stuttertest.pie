@@ -54,7 +54,7 @@ var.fullMouseOn = 0
 var.SlashOncePressed = true
 
       //ei kauhean smooth F1, smoot f1
-      /*
+
       key.RightAlt+key.1 = true
       wait 20ms
       key.RightAlt+key.1 = false
@@ -62,7 +62,7 @@ var.SlashOncePressed = true
       key.f12 = true
       wait 20ms
       key.f12 = false
-      */
+
  }
 
 // faster mouse
@@ -113,76 +113,52 @@ if(key.RightAlt && key.m && key.n)
 endif
 
 
-if key.RightAlt
-   if key.0
-      var.sensitivity = 90 // added this
-   endif
-   if key.1
-      var.sensitivity = 120
-   endif
-   if key.2
-      var.sensitivity = 140
-   endif
-   if key.3
-      var.sensitivity = 160
-   endif
-   if key.4
-      var.sensitivity = 180
-   endif
-   if key.5
-      var.sensitivity = 200
-   endif
-   if key.6
-      var.sensitivity = 220
-   endif
-   if key.7
-      var.sensitivity = 240
-   endif
-   if key.8
-      var.sensitivity = 240
-   endif
-endif
-
  if key.Insert
     var.smoothMouse = false
  else
     var.smoothMouse = true
  endif
 
-if odd(var.enabled)
-
-PIE.FrameRate = screen.RefreshRate * 2
+ //PIE.FrameRate = screen.RefreshRate * 2
+PIE.FrameRate = 700hz
 
 // DEBUG: COMMENT OUT
- /*
+
   if key.0
-      PIE.FrameRate = 450 hz
+      PIE.FrameRate = 500 hz
    endif
    if key.1
-      PIE.FrameRate = 100 hz
+      PIE.FrameRate = 600 hz
    endif
    if key.2
-      PIE.FrameRate = 120 hz
+      PIE.FrameRate = 700 hz
    endif
    if key.3
-      PIE.FrameRate = 140 hz
+      PIE.FrameRate = 800 hz
    endif
    if key.4
-      PIE.FrameRate = 160 hz
+      PIE.FrameRate = 900 hz
    endif
    if key.5
-      PIE.FrameRate = 180 hz
+      PIE.FrameRate = 1000 hz
    endif
    if key.6
-      PIE.FrameRate = 200 hz
+      PIE.FrameRate = 2000 hz
    endif
    if key.7
-      PIE.FrameRate = 220 hz
+      PIE.FrameRate = 2400 hz
    endif
    if key.8
-      PIE.FrameRate = 240 hz
+      PIE.FrameRate = 5000 hz
    endif
-   */
+
+//DebugPrint("x")
+
+if odd(var.enabled)
+
+
+
+
 
 if key.w || key.s
    var.walking = true
@@ -323,6 +299,7 @@ endif
 var.XMoveMouseLast = var.XMoveMouse
 
 if var.XMoveMouse
+   DebugPrint("x")
    var.Xnow = MapRange(var.XSmooth, -var.XDegMin degrees,var.XDegMax degrees, var.Xfrom mickeys,var.Xto mickeys)
    FakeMouse.DirectInputX = var.Xnow
 else
@@ -382,6 +359,7 @@ endif
 var.YMoveMouseLast = var.YMoveMouse
 
 if var.YMoveMouse
+   DebugPrint("x")
    var.Ynow = MapRange(var.YSmooth, -var.YDegMin degrees, var.YDegMax degrees, var.Yfrom mickeys,var.Yto mickeys)
    FakeMouse.DirectInputY = var.Ynow
 else
@@ -390,7 +368,7 @@ endif
 
 else
     key.CapsLock = false
-    pie.FrameRate = 30 hz
+    //pie.FrameRate = 30 hz
 endif
 
 // Paramaters set on runtime
@@ -421,7 +399,8 @@ if key.End
    var.enabled = 0
 endif
 
-debug = "PIE.FrameRate=" + PIE.FrameRate + " | freeLookOnStill=" + var.freeLookOnStill + " | freeYLook=" + var.freeYLook + " | var.fullMouseKey=" + var.fullMouseKey + " | var.fullMouseAlwaysOff=" + var.fullMouseAlwaysOff + " | CapsLock=" + key.CapsLock + " | var.skipMouseButtons=" +  var.skipMouseButtons + " Deltax=" + delta(var.XSmooth)
+//debug = "PIE.FrameRate=" + PIE.FrameRate + " | freeLookOnStill=" + var.freeLookOnStill + " | freeYLook=" + var.freeYLook + " | var.fullMouseKey=" + var.fullMouseKey + " | var.fullMouseAlwaysOff=" + var.fullMouseAlwaysOff + " | CapsLock=" + key.CapsLock + " | var.skipMouseButtons=" +  var.skipMouseButtons + " Deltax=" + delta(var.XSmooth)
+DEBUG = PIE.FrameRate + "__" + PIE.FrameTime + "__" + PIE.Frame + "__" + PIE.RealFrameRate + "__ PIE.Frame smooth=" + smooth(PIE.RealFrameRate)
 
 
 //debug = TrackIR.RealYaw + "| var.X=" + var.X + "|" + mouse.DirectInputX + " - " + TrackIR.RealPitch + "| var.freeLookOnStill=" + var.freeLookOnStill + " | forcedFullMouse=" + var.forcedFullMouse + " | var.sensitivity=" + var.sensitivity + " | PIE.FrameRate=" + PIE.FrameRate

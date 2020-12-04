@@ -551,7 +551,7 @@ endif
 if odd(var.StrafeEnabled) // || key.c
 // vasen
 
-if TrackIR.RealRoll > 6 && < 15 then
+if TrackIR.x < -0.03 then
    if var.strafeWalkEnabled && (var.onWalkForwardZone || var.onWalkBackwardZone || var.onResetZone)
       key.c = true
    endif
@@ -575,28 +575,6 @@ if TrackIR.RealRoll > 6 && < 15 then
 
        var.settedOnLeftRoll = false
     endif
-else if TrackIR.RealRoll > 15
-   if key.Comma
-      key.q = true
-      var.qSet = true
-   else
-       key.a = true
-       var.aSet = true
-   endif
-
-   if var.headRunEnabled
-       if key.shift == false
-          key.shift = true
-          var.settedOnLeftRoll = true
-       endif
-   else
-       if key.space == false
-          //key.space = true
-          var.settedOnLeftRoll = true
-       endif
-   endif
-
-   var.rollLeft = true;
 else
     if var.rollLeft == true
        var.rollLeft = false
@@ -623,7 +601,7 @@ else
 endif
 
 // oikea
-if TrackIR.RealRoll < -6 && > -15 then
+if TrackIR.x > 0.03 then
    if var.strafeWalkEnabled && (var.onWalkForwardZone || var.onWalkBackwardZone || var.onResetZone)
       key.c = true
    endif
@@ -647,29 +625,6 @@ if TrackIR.RealRoll < -6 && > -15 then
 
        var.settedOnRightRoll = false
     endif
-else if TrackIR.RealRoll < -15
-
-   if key.Comma
-      key.e = true
-      var.eSet = true
-   else
-       key.d = true
-       var.dSet = true
-   endif
-
-   if var.headRunEnabled
-       if key.shift == false
-          key.shift = true
-          var.settedOnRightRoll = true
-       endif
-   else
-       if key.space == false
-          //key.space = true
-          var.settedOnRightRoll = true
-       endif
-   endif
-
-   var.rollRight = true;
 else
     if var.rollRight == true
        var.rollRight = false
@@ -697,7 +652,7 @@ endif
 
 if var.peekEnabled
 // peek right
-if TrackIR.RealX > 0.20 && < 0.35 && (TrackIR.RealRoll < 5 && TrackIR.RealRoll > -5) then
+if TrackIR.RealX > 0.20 && < 0.35 && (TrackIR.x < 5 && TrackIR.x > -5) then
    key.c = true
    Key.D = true;
    var.peekLeft = true;
@@ -714,7 +669,7 @@ else
 endif
 
 // peek left
-if TrackIR.RealX < -0.20 && > -0.35 && (TrackIR.RealRoll < 5 && TrackIR.RealRoll > -5) then
+if TrackIR.RealX < -0.20 && > -0.35 && (TrackIR.x < 5 && TrackIR.x > -5) then
    key.c = true
    Key.a = true
    var.peekRight = true;
@@ -824,7 +779,7 @@ if key.PageDown || key.End
    //midi.BassDrum1 = true
 endif
 
-debug = "var.StrafeEnabled=" + var.StrafeEnabled + "var.KeysToMove=" + var.KeysToMove + " | walkEnabled=" + var.walkEnabled + " | TrackIR.RealZ=" + TrackIR.RealZ + " | var.correctionLeft=" + abs(var.correctionLeft) + " | var.correctionRight=" + abs(var.correctionRight) + " | var.correctionUp=" + abs(var.correctionUp) + " | var.correctionDown=" + abs(var.correctionDown) + " | var.zDelta=" + var.zDelta + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw + " | var.allCalibrated=" + var.allCalibrated
+debug = "var.StrafeEnabled=" + var.StrafeEnabled + "var.KeysToMove=" + var.KeysToMove + " | walkEnabled=" + var.walkEnabled + " | TrackIR.RealZ=" + TrackIR.RealZ + " | var.correctionLeft=" + abs(var.correctionLeft) + " | var.correctionRight=" + abs(var.correctionRight) + " | var.correctionUp=" + abs(var.correctionUp) + " | var.correctionDown=" + abs(var.correctionDown) + " | var.zDelta=" + var.zDelta + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw + " | var.allCalibrated=" + var.allCalibrated + " | TrackIR.RealX=" + TrackIR.RealX + " | TrackIR.x=" + TrackIR.x
 
 //debug = var.forceCalibrateRight + "  |   " + var.forceCalibrateLeft + "  |   " + var.forceCalibrateUp + "  |   " + var.forceCalibrateDown
 

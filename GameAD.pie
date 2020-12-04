@@ -1,0 +1,197 @@
+﻿/*
+
+key.Home                :  Enable
+key.End                 :  Disable
+
+key.Comma               : Peek mode, replacec a with q and d with e
+*/
+
+if (starting){
+   /* *** CONFIG ** */
+   var.peekEnabled = false
+
+
+   // Disabled by default
+   var.enabled = 0  // !!
+   // debug
+
+   /*
+      var.enabled = 1
+      var.KeysToMove = 1
+   */
+
+   var.enableRun = true
+
+   // DISABLE
+   /*
+      key.RightAlt+key.1 = true
+      wait 20ms
+      key.RightAlt+key.1 = false
+
+   
+      key.f12 = true
+      wait 20ms
+      key.f12 = false
+      */
+
+      var.rollLeftRun = false
+      var.rollRightRun = false
+}
+
+
+if(key.RightAlt && key.h)
+   var.enableRun = false
+endif
+
+
+if odd(var.enabled)
+
+pie.FrameRate = 60 hz
+
+if TrackIR.x < -0.03 then
+
+   if key.Comma
+      key.q = true
+      var.qSet = true
+   else
+       key.a = true
+       var.aSet = true
+   endif
+
+   var.rollLeft = true;
+
+   if TrackIR.x < -0.06 && var.enableRun then
+      var.rollLeftRun = true
+      key.Shift = true
+   endif
+
+else
+    if var.rollLeft == true
+       var.rollLeft = false
+
+       if var.aSet
+          Key.a = false
+       endif
+
+       if var.qSet
+          Key.q = false
+       endif
+
+       var.aSet = false
+       var.qSet = false
+    endif
+
+    if var.rollLeftRun == true
+       var.rollLeftRun = false
+       key.Shift = false
+    endif
+endif
+
+// oikea
+if TrackIR.x > 0.03 then
+
+   if key.Comma
+      key.e = true
+      var.eSet = true
+   else
+       key.d = true
+       var.dSet = true
+   endif
+
+   var.rollRight = true;
+
+   if TrackIR.x > 0.06 && var.enableRun then
+      var.rollRightRun = true
+      key.Shift = true
+   endif
+else
+    if var.rollRight == true
+       var.rollRight = false
+
+       if var.dSet
+          Key.d = false
+       endif
+
+       if var.eSet
+          Key.e = false
+       endif
+
+       var.dSet = false
+       var.eSet = false
+    endif
+
+    if var.rollRightRun == true
+       var.rollRightRun = false
+       key.Shift = false
+    endif
+endif
+
+
+if var.peekEnabled
+// peek right
+if TrackIR.RealX > 0.20 && < 0.35 && (TrackIR.x < 5 && TrackIR.x > -5) then
+   key.c = true
+   Key.D = true;
+   var.peekLeft = true;
+else if TrackIR.RealX > 0.35 then
+   key.c = true
+   Key.D = true;
+   var.peekLeft = true;
+else
+    if var.peekLeft == true
+       var.peekLeft = false
+       Key.d = false
+       key.c = false
+    endif
+endif
+
+// peek left
+if TrackIR.RealX < -0.20 && > -0.35 && (TrackIR.x < 5 && TrackIR.x > -5) then
+   key.c = true
+   Key.a = true
+   var.peekRight = true;
+else if TrackIR.RealX < -0.35 then
+   key.c = true
+   Key.a = true
+   var.peekRight = true;
+else
+    if var.peekRight == true
+       var.peekRight = false
+       Key.a = false
+       key.c = false
+    endif
+endif
+// peekEnabled
+endif
+
+ // enabled
+else
+    pie.FrameRate = 60 hz
+endif
+
+
+if key.Home
+   var.enabled = 1
+   key.a = false
+   key.d = false
+endif
+
+if key.End
+   key.a = false
+   key.d = false
+   var.enabled = 0
+endif
+
+debug = "Enabled=" + odd(var.enabled) + " | TrackIR.RealZ=" + TrackIR.RealZ + " | var.correctionLeft=" + abs(var.correctionLeft) + " | var.correctionRight=" + abs(var.correctionRight) + " | var.correctionUp=" + abs(var.correctionUp) + " | var.correctionDown=" + abs(var.correctionDown) + " | var.zDelta=" + var.zDelta + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw + " | var.allCalibrated=" + var.allCalibrated + " | TrackIR.RealX=" + TrackIR.RealX + " | TrackIR.x=" + TrackIR.x
+
+//debug = var.forceCalibrateRight + "  |   " + var.forceCalibrateLeft + "  |   " + var.forceCalibrateUp + "  |   " + var.forceCalibrateDown
+
+//debug = var.correctionLeft + "  |   " + var.correctionUp + "  |   " + var.correctionRight + "  |   " + var.correctionDown + " | TrackIR.RealPitch=" + TrackIR.RealPitch + " | TrackIR.RealYaw=" + TrackIR.RealYaw
+
+
+
+
+
+
+
+

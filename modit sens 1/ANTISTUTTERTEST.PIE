@@ -1,43 +1,44 @@
 ﻿
-//pie.FrameRate = screen.RefreshRate * 2
-pie.FrameRate = 240hz
+pie.FrameRate = screen.RefreshRate * 2
+//pie.FrameRate = 700hz
 DEBUG = PIE.FrameRate + "__" + PIE.FrameTime + "__" + PIE.Frame + "__" + PIE.RealFrameRate
-
-  if key.0
-      PIE.FrameRate = 450 hz
-   endif
-   if key.1
-      PIE.FrameRate = 100 hz
-   endif
-   if key.2
-      PIE.FrameRate = 120 hz
-   endif
-   if key.3
-      PIE.FrameRate = 140 hz
-   endif
-   if key.4
-      PIE.FrameRate = 160 hz
-   endif
-   if key.5
-      PIE.FrameRate = 180 hz
-   endif
-   if key.6
-      PIE.FrameRate = 200 hz
-   endif
-   if key.7
-      PIE.FrameRate = 220 hz
-   endif
-   if key.8
-      PIE.FrameRate = 240 hz
-   endif
-
 
 /*
   if key.0
-      PIE.FrameRate = 200 hz
+      PIE.FrameRate = 500 hz
    endif
    if key.1
-      PIE.FrameRate = 300 hz
+      PIE.FrameRate = 600 hz
+   endif
+   if key.2
+      PIE.FrameRate = 700 hz
+   endif
+   if key.3
+      PIE.FrameRate = 800 hz
+   endif
+   if key.4
+      PIE.FrameRate = 900 hz
+   endif
+   if key.5
+      PIE.FrameRate = 1000 hz
+   endif
+   if key.6
+      PIE.FrameRate = 2000 hz
+   endif
+   if key.7
+      PIE.FrameRate = 2400 hz
+   endif
+   if key.8
+      PIE.FrameRate = 5000 hz
+   endif
+ */
+
+
+  if key.0
+      PIE.FrameRate = 120 hz
+   endif
+   if key.1
+      PIE.FrameRate = 240 hz
    endif
    if key.2
       PIE.FrameRate = 400 hz
@@ -46,7 +47,7 @@ DEBUG = PIE.FrameRate + "__" + PIE.FrameTime + "__" + PIE.Frame + "__" + PIE.Rea
       PIE.FrameRate = 500 hz
    endif
    if key.4
-      PIE.FrameRate = 600 hz
+      PIE.FrameRate = 666 hz
    endif
    if key.5
       PIE.FrameRate = 700 hz // tästä eteenpäin menee pahaksi
@@ -58,9 +59,9 @@ DEBUG = PIE.FrameRate + "__" + PIE.FrameTime + "__" + PIE.Frame + "__" + PIE.Rea
       PIE.FrameRate = 900 hz
    endif
    if key.8
-      PIE.FrameRate = 90 hz
+      PIE.FrameRate = 1000 hz
    endif
-*/
+
 
 /*
   if key.0
@@ -92,12 +93,27 @@ DEBUG = PIE.FrameRate + "__" + PIE.FrameTime + "__" + PIE.Frame + "__" + PIE.Rea
    endif
 */
 
+/*
+  Eli FlashPieWindow ja 700hz toimii aika hyvin, mutta cpu 7%
+  Samoin toimii DebugPRint
+
+*/
 if key.u
-   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 25
+   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 1
+   //DebugPrint("")
+   FlashPieWindow  // toimii (hieman vähemmän cpu kuormaa kuin print
 endif
 
-if key.p
-   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 10
+if key.y
+   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 2
+   //DebugPrint("")   //toimii
+   //wait(1 milliseconds)
+   //FlashPieWindow  // toimii
+endif
+
+if key.h
+   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 1
+   DebugPrint("")
 endif
 
 
@@ -107,6 +123,11 @@ endif
 
 if key.I
    FakeMouse.DirectInputX = FakeMouse.DirectInputX + 3
+endif
+
+if key.Dot
+   FakeMouse.DirectInputX = FakeMouse.DirectInputX + 5
+   debugprint("x")
 endif
 
 

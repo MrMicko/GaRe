@@ -1,0 +1,192 @@
+﻿
+
+if (starting) {
+    pie.FrameRate = 0.5hz
+
+   if (trackir.Version == 0)
+      debugPrint("Start TrackIR")
+   endif
+
+   if (trackir.Version == 0) // || joystick1.Attached == false) {
+      chain("E:\progs\GlovePIE045Free\omat\GaRe\Sensitivity0.pie")
+   }
+
+   var.setTrackIR = false
+}
+
+
+if (trackir.Version != 0) {
+   pie.FrameRate = 20hz
+
+   if var.setTrackIR == false
+      var.setTrackIR = true
+
+      // reload MOUSE and WASD
+      /*
+      key.RightAlt = true
+      wait 200ms
+      key.End = true
+      wait 200ms
+      key.End = false
+      key.RightAlt = false
+
+      wait 100ms
+      */
+      // enable them
+      /*
+      key.RightAlt = true
+      key.Home =  true
+      wait 200ms
+      key.Home = false
+      wait 200ms
+      key.RightAlt = false
+      */
+      //wait 1000ms
+
+   //Configure
+
+   // alt crouch key
+   /*
+   key.RightAlt = true
+   key.c = true
+   key.1 = true
+   wait 500ms
+   key.RightAlt = false
+   key.c = false
+   key.1 = false
+   */
+
+   /*
+   // disable freemouse
+   key.RightAlt = true
+   key.m = true
+   key.n = true
+   key.1 = true
+   wait 200ms
+   key.RightAlt = false
+   key.m = false
+   key.n = false
+   wait 200ms
+   key.1 = false
+   */
+
+   // freelook on still
+
+   /*
+   key.RightAlt = true
+   key.k = true
+   key.1 = true
+   wait 200ms
+   key.RightAlt = false
+   key.k = false
+   wait 200ms
+   key.1 = false
+   */
+
+    /*
+   // free Y look
+   key.RightAlt = true
+   key.L = true
+   key.y = true
+   key.1 = true
+   wait 500ms
+   key.RightAlt = false
+   key.L = false
+   key.y = false
+   wait 500ms
+   key.1 = false
+
+   wait 200ms
+   */
+   // combined jump
+   /*
+   key.RightAlt = true
+   key.c = true
+   key.j = true
+   key.1 = true
+   wait 500ms
+   key.RightAlt = false
+   key.c = true
+   key.j = true
+   key.k = false
+   wait 500ms
+   key.1 = false
+   */
+   // Headrun
+   // TEST!!!
+
+   /*
+   key.RightAlt = true
+   key.h = true
+   key.1 = true
+   wait 500ms
+   key.RightAlt = false
+   key.h = false
+   wait 500ms
+   key.1 = false
+   */
+
+      // alt crouch key
+      /*
+   key.RightAlt = true
+   key.c = true
+   key.1 = true
+   wait 500ms
+   key.RightAlt = false
+   key.c = false
+   key.1 = false
+      */
+   // disable freemouse
+   /*
+   key.RightAlt = true
+   key.m = true
+   key.n = true
+   key.1 = true
+   wait 200ms
+   key.RightAlt = false
+   key.m = false
+   key.n = false
+   wait 200ms
+   key.1 = false
+   */
+   // enable peek
+   /*
+      Ctrl+key.f4 = true
+      wait 20ms
+      Ctrl+key.f4 = false
+    */
+    /*
+      Ctrl+key.f4 = true
+      wait 20ms
+      Ctrl+key.f4 = false
+     */
+   /*
+   key.RightAlt = true
+   key.k = true
+   key.1 = true
+   wait 100ms
+   key.RightAlt = false
+   key.k = false
+   wait 100ms
+   key.1 = false
+
+   wait 100ms
+   */
+      key.RightAlt+key.1 = true
+      wait 40ms
+      key.RightAlt+key.1 = false
+
+      wait 40ms
+
+      key.f12 = true
+      wait 40ms
+      key.f12 = false
+
+      wait 20ms
+      key.Slash = true
+      wait 40ms
+      key.Slash = false
+   endif
+
+   //exitpie
+}

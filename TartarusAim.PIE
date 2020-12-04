@@ -1,0 +1,17 @@
+﻿if (starting){
+   var.mouseRight = false
+}
+
+if key.Slash
+   var.mouseRight = true
+   key.Dot = true
+   mouse.RightButton = true
+else
+   if var.mouseRight == true
+      mouse.RightButton = false
+      key.Dot = false
+   endif
+
+   var.mouseRight = false
+endif
+

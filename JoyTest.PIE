@@ -1,0 +1,7 @@
+﻿
+
+//debug = joystick1.Attached+ " _ " + joystick2.Attached  + " _ " + joystick3.Attached + " _ " + joystick4.Attached + " _ " + joystick5.Attached + " _ " + joystick6.Attached
+//debug = joystick1.ProductName+ " _ " + joystick2.ProductName  + " _ " + joystick3.ProductName + " _ " + joystick4.ProductName + " _ " + joystick5.ProductName + " _ " + joystick6.ProductName
+//debug = mouse1.DirectInputPos+ " _ " + mouse2.DirectInputPos  + " _ " + mouse3.DirectInputPos + " _ " + mouse4.DirectInputPos + " _ " + mouse5.DirectInputPos + " _ " + mouse6..DirectInputPos
+debug = mouse1.DirectInputPos+ " _ " + mouse.DirectInputX
+

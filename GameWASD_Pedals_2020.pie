@@ -1,0 +1,243 @@
+﻿// Beta2 - Added pedal-controls (overrides head)
+// NOTE: ONLY pedals, rudders are out of this scope
+// End is master switch off
+if key.End && key.RightAlt
+   chain("D:\progs\GlovePIE045Free\omat\GaRe\GameWASD_Pedals_2020.pie")
+endif
+
+// End master switch off
+if key.Ctrl && key.Delete
+   ExitPie
+endif
+
+// forward and backwards
+var.RealPedalForward = MapRange(joystick5.y, -1, 1, 0, -1)
+var.RealPedalBackward = MapRange(joystick5.x, -1, 1, 0,-1)
+
+var.attached = joystick5.Attached
+var.Rudder = joystick5.roll
+
+if var.RealPedalForward < -0.9
+   var.joyCalibrated =  true
+endif
+
+if (starting){
+
+   var.cpzeroed = true;
+
+   var.runOn = false
+   var.pedalszeroed = true
+   var.backPedalPressed = false
+   var.crouchToggled = false
+
+   var.pedalJumpOn = false
+   var.pedalRunOn = false
+
+   /* *** CONFIG ** */
+   var.headRunEnabled = false
+   var.walkEnabled = false     // !!
+   var.runToggleEnabled = false
+   var.pedalCombinedJumpEnabled = false
+   var.crouchCombinedProne = false
+   var.peekEnabled = false
+   var.standingMode = 0
+
+   var.crouchAltKey = false
+
+   // Disabled by default
+   var.enabled = 1  // !!
+   var.KeysToMove = 1  // !!
+   // debug
+   /*
+      var.enabled = 1
+      var.KeysToMove = 1
+
+      Ctrl+key.f5 = true
+      wait 20ms
+      Ctrl+key.f5 = false
+
+   
+      key.f12 = true
+      wait 20ms
+      key.f12 = false
+
+   */
+
+   // New stuff
+   var.walkToggled = false
+}
+
+if key.Home && key.RightAlt
+   var.enabled = 1
+
+   key.a = false
+   key.d = false
+   key.w = false
+   key.s = false
+   key.Shift = false
+   var.walkToggled = false
+end if
+
+// TODO: konffattavaksi
+// onko fullmouse kun ei liikuta
+// tuo waitForZero JOS edes tarvetta missään
+
+
+debug = "Movement enabled=" + odd(var.KeysToMove) + " | runOn=" + var.runOn + " | jumpOn=" + var.pedalJumpOn + " | pedalRunOn=" + var.pedalRunOn + " | " + var.RealPedalForward + " | shift=" + key.shift + " | space=" + key.space + " | ctrl=" + key.ctrl + " | " + var.RealPedalBackward
+
+/*
+// how to enable/disable
+
+
+press(key.RightAlt)
+press(key.w)
+press(key.1)
+wait 20ms
+release(key.RightAlt)
+release(key.w)
+release(key.1)
+wait 2000ms
+
+press(key.RightAlt)
+press(key.w)
+wait 20ms
+release(key.RightAlt)
+release(key.w)
+wait 20ms
+
+*/
+
+// "Simple" config
+
+//
+if(key.RightAlt && key.k)
+  // jos 1 on true niin enabled, jos 0 niin false
+   var.walkEnabled = key.1
+endif
+
+if(key.RightAlt && key.c)
+   var.crouchAltKey = key.1
+endif
+
+if(key.RightAlt && key.c && key.j)
+   var.pedalCombinedJumpEnabled = key.1
+endif
+
+if(key.RightAlt && key.p)
+   var.peekEnabled = key.1
+endif
+
+if(key.RightAlt && key.h)
+   var.headRunEnabled = key.1
+endif
+
+
+if odd(var.enabled)
+
+pie.FrameRate = 60 hz
+
+
+// /* Overriding pedal-controls
+if var.attached && var.joyCalibrated
+// forward
+if var.RealPedalForward < 0
+   var.forwardPressed = true
+   var.walkToggled = false
+
+   Key.w = true
+   //key.Shift = true
+else
+       if var.forwardPressed
+          var.forwardPressed = false
+
+          if key.w
+             Key.w = false
+          endif
+
+          if key.Shift
+             key.shift = false
+          endif
+       endif
+endif
+
+// backwards
+if var.RealPedalBackward < 0
+   if var.walkToggled
+      key.w = false
+   endif
+   /*
+   if var.forwardPressed
+      Key.Space = true
+      var.jumpSettedOnPedals = true
+   else
+       var.backPressed = true
+       Key.s = true
+   endif
+   */
+
+       var.backPressed = true
+       Key.s = true
+else
+       if var.backPressed
+          var.backPressed = false
+          if key.s
+             Key.s = false
+          endif
+          /*
+          if key.Shift
+             key.shift = false
+          endif
+       else if var.jumpSettedOnPedals
+          var.jumpSettedOnPedals = false
+          key.Space = false
+       */
+       endif
+endif
+
+
+if var.Rudder > 0.20
+   key.w = true
+   var.walkToggled = true
+endif
+
+
+// running etc
+if var.RealPedalForward < -0.60 || var.RealPedalBackward < -0.80
+   key.Shift = true
+   var.crouch = false
+else
+    if key.Shift
+       key.Shift = false
+    endif
+endif
+
+// if joystick1.Attached && var.joyCalibrated
+endif
+
+
+// head on
+//if Clicked(key.Home) || Clicked(F12) || Clicked(key.PageUp)
+if Clicked(F12) || key.Home
+//   var.KeysToMove = 1
+   var.walkToggled = false
+end if
+
+// head off
+if key.PageDown || key.End
+   var.KeysToMove = 0
+   key.w = false
+   key.s = false
+   key.Shift = false
+   var.walkToggled = false
+endif
+
+
+ // enabled
+else
+    pie.FrameRate = 10 hz
+endif
+
+
+
+
+

@@ -1,0 +1,147 @@
+﻿
+// Eli tunnistaisiko tämä hiiren liikeen ja sen mukaan sitten laittaisi hydraa päälle ja pois...
+if (starting){
+
+var.centreX = mouse.DirectInputX
+var.smoothMouse = true
+
+var.degreeLimitX = 200
+var.degreeLimitY = 60
+
+var.mickeysLimitX = 1500
+var.mickeysLimitY = 1500
+
+var.sensitivity = 120  //default
+
+var.Xfrom = -var.mickeysLimitX
+var.Xto =  var.mickeysLimitX
+
+var.Yfrom = -var.mickeysLimitY
+var.Yto =  var.mickeysLimitY
+
+var.fullMouseClickedX = false
+var.fullMouseClickedY = false
+
+
+/*** CONFIG ***/
+var.freeLookOnStill = false
+// since v4_b6 this changed a little, free y movement only when NOT walking
+var.freeYLook = false
+var.fullMouseAlwaysOff = true
+var.skipMouseButtons = true
+
+// Disabled by default
+var.enabled = 1
+var.fullMouseOn = 0
+// NOTE: this to false in old config
+var.SlashOncePressed = true
+
+      //ei kauhean smooth F1, smoot f1
+      /*
+      key.RightAlt+key.1 = true
+      wait 20ms
+      key.RightAlt+key.1 = false
+         
+      key.f12 = true
+      wait 20ms
+      key.f12 = false
+      */
+ }
+
+
+ if key.Insert
+    var.smoothMouse = false
+ else
+    var.smoothMouse = true
+ endif
+
+if odd(var.enabled)
+
+PIE.FrameRate = screen.RefreshRate * 2
+
+var.XMoveMouse = false
+
+// *** Headmouse X and Y ***
+var.X = mouse.DirectInputX
+
+if var.smoothMouse == true
+   var.XSmooth = smooth(var.X, 2)
+else
+    var.XSmooth = var.X
+endif
+
+
+//******* X-axle ******//
+
+ if var.X < var.centreX 
+      if var.XSmooth < var.XLast
+         var.XMoveMouse = True
+      endif
+   else if var.X > var.centreX 
+      if var.XSmooth > var.XLast
+         var.XMoveMouse = True
+      endif
+   endif
+
+var.XLast = var.XSmooth
+/*
+if var.XMoveMouse == false
+ if key.dot
+   if var.X < -100
+      if var.XSmooth < var.XLast
+         var.XMoveMouse = True
+      endif
+   else if var.X > 100
+      if var.XSmooth > var.XLast
+         var.XMoveMouse = True
+      endif
+   endif
+ else
+   if var.X < 0
+      if var.XSmooth < var.XLast
+         var.XMoveMouse = True
+      endif
+   else if var.X > 0
+      if var.XSmooth > var.XLast
+         var.XMoveMouse = True
+      endif
+   endif
+ endif
+endif
+ */
+else
+    key.CapsLock = false
+    pie.FrameRate = 30 hz
+endif
+
+// Paramaters set on runtime
+
+// On
+if key.Home && var.SlashOncePressed
+   var.enabled = 1
+   var.fullMouseOn = 0
+end if
+
+// headmouse on
+if (key.PageDown && var.SlashOncePressed) || (key.PageUp && var.SlashOncePressed)
+   var.enabled = 1
+
+   if var.fullMouseAlwaysOff == true
+       var.fullMouseOn = 0
+   else
+       var.fullMouseOn = 1
+   endif
+end if
+
+if key.Slash
+   var.SlashOncePressed = true
+endif
+
+// Off
+if key.End
+   var.enabled = 0
+endif
+
+debug = "var.XMoveMouse=" + var.XMoveMouse + "| var.centreX=" +  var.centreX + "| mouse.DirectInputX=" +  mouse.DirectInputX + "| var.XLast=" + var.XLast
+//debug = TrackIR.RealYaw + "| var.X=" + var.X + "|" + mouse.DirectInputX + " - " + TrackIR.RealPitch + "| var.freeLookOnStill=" + var.freeLookOnStill + " | forcedFullMouse=" + var.forcedFullMouse + " | var.sensitivity=" + var.sensitivity + " | PIE.FrameRate=" + PIE.FrameRate
+

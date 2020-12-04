@@ -1,0 +1,41 @@
+﻿if (starting){
+   var.wForced = false
+   var.shiftForced = false
+   var.keyReleased = false
+}
+
+// Fin A-kirjain
+//  semicolon (ö) ottaa pois päältä
+
+swallow(key.Apostrophe)
+
+if key.Apostrophe
+   if var.wForced == false && var.shiftForced == false
+      var.wForced = true
+      key.w = true
+   else if var.wForced == true && var.shiftForced == false && var.keyReleased
+      var.shiftForced = true
+      key.Shift = true
+   else if var.wForced == true && var.shiftForced == true && var.keyReleased
+      key.Shift = false
+      var.shiftForced = false
+   endif
+
+   var.keyReleased = false
+else
+    var.keyReleased = true
+endif
+
+if key.s || key.Escape || key.Enter || key.Home || key.End || key.C  || key.Ctrl || key.Semicolon
+   if var.wForced == true
+      key.w = false
+   endif
+
+   if var.shiftForced == true
+      key.shift = false
+   endif
+
+   var.wForced = false
+   var.shiftForced = false
+endif
+
